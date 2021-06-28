@@ -1,6 +1,7 @@
 """Main Pandarallel file"""
 
 import os
+import platform
 import pickle
 from itertools import count
 from multiprocessing import get_context
@@ -24,7 +25,11 @@ from pandarallel.utils.tools import ERROR, INPUT_FILE_READ, PROGRESSION, VALUE
 
 # Python 3.8 on MacOS by default uses "spawn" instead of "fork" as start method for new
 # processes, which is incompatible with pandarallel. We force it to use "fork" method.
-context = get_context("fork")
+from sys import platform
+if platform == "darwin":  # OS X
+    context = get_context("fork")
+else:
+    context = get_context()
 
 # By default, Pandarallel use all available CPUs
 NB_WORKERS = context.cpu_count()
